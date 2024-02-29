@@ -15,6 +15,8 @@ export const CreateTodo: React.FC<CreateTodoProps> = ({ setTodoList }) => {
 
   function handleSubmitTodo(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
+    if (newTodo === "") return;
+
     setTodoList((prevList) => [
       ...prevList,
       { id: Math.random(), todo: newTodo, isChecked: false },

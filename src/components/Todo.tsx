@@ -15,7 +15,7 @@ export const Todo = () => {
         <TodoList todoList={todoList} setTodoList={setTodoList} />
       ) : (
         <div className="flex justify-center pt-6">
-          <p className="text-[#A0A3BC]">No todo added yet.</p>
+          <p className="text-[#A0A3BC]">No item added yet.</p>
         </div>
       )}
     </>
