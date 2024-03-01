@@ -1,12 +1,19 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import { CreateTodo } from "./CreateTodo";
 import { TodoList } from "./TodoList";
 
+const todoListFromLocalStorage = JSON.parse(
+  localStorage.getItem("todoList") || ""
+);
+
 export const Todo = () => {
-  const [todoList, setTodoList] = useState<
-    { id: number; todo: string; isChecked: boolean }[]
-  >([]);
+  const [todoList, setTodoList] = useState(todoListFromLocalStorage);
+
+  useEffect(
+    () => localStorage.setItem("todoList", JSON.stringify(todoList)),
+    [todoList]
+  );
 
   return (
     <>
