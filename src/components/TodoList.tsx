@@ -14,8 +14,8 @@ export const TodoList: React.FC<TodoListProps> = ({
   const [isActive, setIsActive] = useState("All");
 
   function handleCheckTodo(todoId: number) {
-    setTodoList((prevList) =>
-      prevList.map((todo) =>
+    setTodoList((curList) =>
+      curList.map((todo) =>
         todo.id === todoId ? { ...todo, isChecked: !todo.isChecked } : todo
       )
     );
@@ -24,7 +24,10 @@ export const TodoList: React.FC<TodoListProps> = ({
   function handleClearCompletedTodo() {
     const activeTodos = todoList.filter((todo) => todo.isChecked === false);
     setTodoList(activeTodos);
-    setIsActive("All");
+  }
+
+  function handleDeleteSingle(deleteId: number) {
+    setTodoList((curList) => curList.filter((todo) => todo.id !== deleteId));
   }
 
   const itemsLeft = todoList.filter((i) => i.isChecked === false)?.length;
@@ -40,33 +43,35 @@ export const TodoList: React.FC<TodoListProps> = ({
 
   return (
     <div className="bg-[#25283D] rounded-md">
+      {filteredList.length < 1 && (
+        <div className="flex py-6 px-7 gap-5 border-b border-gray-700 justify-center">
+          <p className="text-[#A0A3BC]">No {isActive.toLowerCase()} item.</p>
+        </div>
+      )}
+
       <ul>
-        {filteredList.length < 1 && (
-          <div className="flex py-6 px-7 gap-5 border-b border-gray-700 justify-center">
-            <p className="text-[#A0A3BC]">No {isActive.toLowerCase()} item.</p>
-          </div>
-        )}
         {filteredList.map((todo) => (
           <li
-            className={`flex py-6 px-7 gap-5 border-b border-gray-700 ${
-              todo.isChecked ? "line-through text-[#666a89]" : ""
-            }`}
+            className="flex py-6 px-7 gap-5 border-b border-gray-700 justify-between"
             key={todo.id}
           >
             <label
               className={`text-[#A0A3BC] flex gap-4 items-center ${
-                todo.isChecked ? "text-[#666a89]" : ""
+                todo.isChecked ? " line-through text-[#666a89]" : ""
               }`}
             >
               <input
                 key={todo.id}
                 type="checkbox"
-                className="w-6 h-6"
+                className="w-6 h-6 accent-violet-500"
                 onChange={() => handleCheckTodo(todo.id)}
                 checked={todo.isChecked === true}
               />
               {todo.todo}
             </label>
+            <button onClick={() => handleDeleteSingle(todo.id)}>
+              &#x2716;
+            </button>
           </li>
         ))}
       </ul>
