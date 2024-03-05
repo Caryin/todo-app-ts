@@ -1,17 +1,19 @@
 import { useState } from "react";
+import { TodoItem } from "./TodoItem";
+import { TodoItemType } from "../types/Todo";
 
 interface TodoListProps {
-  todoList: { id: number; todo: string; isChecked: boolean }[];
-  setTodoList: React.Dispatch<
-    React.SetStateAction<{ id: number; todo: string; isChecked: boolean }[]>
-  >;
+  todoList: TodoItemType[];
+  setTodoList: React.Dispatch<React.SetStateAction<TodoItemType[]>>;
 }
+
+type TabType = "All" | "Active" | "Completed";
 
 export const TodoList: React.FC<TodoListProps> = ({
   todoList,
   setTodoList,
 }) => {
-  const [isActive, setIsActive] = useState("All");
+  const [selectedTab, setSelectedTab] = useState<TabType>("All");
 
   function handleCheckTodo(todoId: number) {
     setTodoList((curList) =>
@@ -21,22 +23,22 @@ export const TodoList: React.FC<TodoListProps> = ({
     );
   }
 
-  function handleClearCompletedTodo() {
-    const activeTodos = todoList.filter((todo) => todo.isChecked === false);
-    setTodoList(activeTodos);
-  }
-
-  function handleDeleteSingle(deleteId: number) {
+  function handleDeleteTodo(deleteId: number) {
     setTodoList((curList) => curList.filter((todo) => todo.id !== deleteId));
   }
 
-  const itemsLeft = todoList.filter((i) => i.isChecked === false)?.length;
+  function handleClearCompletedTodo() {
+    const activeTodos = todoList.filter((todo) => !todo.isChecked);
+    setTodoList(activeTodos);
+  }
+
+  const itemsLeft = todoList.filter((i) => !i.isChecked)?.length;
 
   let filteredList;
-  if (isActive === "Active") {
-    filteredList = todoList.filter((todo) => todo.isChecked === false);
-  } else if (isActive === "Completed") {
-    filteredList = todoList.filter((todo) => todo.isChecked === true);
+  if (selectedTab === "Active") {
+    filteredList = todoList.filter((todo) => !todo.isChecked);
+  } else if (selectedTab === "Completed") {
+    filteredList = todoList.filter((todo) => todo.isChecked);
   } else {
     filteredList = todoList;
   }
@@ -45,34 +47,18 @@ export const TodoList: React.FC<TodoListProps> = ({
     <div className="bg-[#25283D] rounded-md">
       {filteredList.length < 1 && (
         <div className="flex py-6 px-7 gap-5 border-b border-gray-700 justify-center">
-          <p className="text-[#A0A3BC]">No {isActive.toLowerCase()} item.</p>
+          <p className="text-[#A0A3BC]">No {selectedTab.toLowerCase()} item.</p>
         </div>
       )}
 
       <ul>
         {filteredList.map((todo) => (
-          <li
-            className="flex py-6 px-7 gap-5 border-b border-gray-700 justify-between"
+          <TodoItem
             key={todo.id}
-          >
-            <label
-              className={`text-[#A0A3BC] flex gap-4 items-center ${
-                todo.isChecked ? " line-through text-[#666a89]" : ""
-              }`}
-            >
-              <input
-                key={todo.id}
-                type="checkbox"
-                className="w-6 h-6 accent-violet-500"
-                onChange={() => handleCheckTodo(todo.id)}
-                checked={todo.isChecked === true}
-              />
-              {todo.todo}
-            </label>
-            <button onClick={() => handleDeleteSingle(todo.id)}>
-              &#x2716;
-            </button>
-          </li>
+            todo={todo}
+            onCheckTodo={handleCheckTodo}
+            onDeleteTodo={handleDeleteTodo}
+          />
         ))}
       </ul>
 
@@ -82,23 +68,20 @@ export const TodoList: React.FC<TodoListProps> = ({
         </div>
         <div className="flex gap-4 text-xs">
           <button
-            onClick={() => setIsActive("All")}
-            value={isActive}
-            className={isActive === "All" ? "text-blue-500 " : ""}
+            onClick={() => setSelectedTab("All")}
+            className={selectedTab === "All" ? "text-blue-500 " : ""}
           >
             All
           </button>
           <button
-            onClick={() => setIsActive("Active")}
-            value={isActive}
-            className={isActive === "Active" ? "text-blue-500 " : ""}
+            onClick={() => setSelectedTab("Active")}
+            className={selectedTab === "Active" ? "text-blue-500 " : ""}
           >
             Active
           </button>
           <button
-            onClick={() => setIsActive("Completed")}
-            value={isActive}
-            className={isActive === "Completed" ? "text-blue-500 " : ""}
+            onClick={() => setSelectedTab("Completed")}
+            className={selectedTab === "Completed" ? "text-blue-500 " : ""}
           >
             Completed
           </button>

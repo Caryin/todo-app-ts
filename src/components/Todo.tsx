@@ -2,22 +2,29 @@ import { useEffect, useState } from "react";
 
 import { CreateTodo } from "./CreateTodo";
 import { TodoList } from "./TodoList";
+import { TodoItemType } from "../types/Todo";
 
 const todoListFromLocalStorage = JSON.parse(
   localStorage.getItem("todoList") || ""
 );
 
 export const Todo = () => {
-  const [todoList, setTodoList] = useState(todoListFromLocalStorage);
+  const [todoList, setTodoList] = useState<TodoItemType[]>(
+    todoListFromLocalStorage
+  );
 
   useEffect(
     () => localStorage.setItem("todoList", JSON.stringify(todoList)),
     [todoList]
   );
 
+  function handleCreateTodo(todo: TodoItemType) {
+    setTodoList((prev) => [...prev, todo]);
+  }
+
   return (
     <>
-      <CreateTodo setTodoList={setTodoList} />
+      <CreateTodo onCreateTodo={handleCreateTodo} />
       {todoList.length > 0 ? (
         <TodoList todoList={todoList} setTodoList={setTodoList} />
       ) : (
