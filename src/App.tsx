@@ -7,7 +7,6 @@ export const App = () => {
         <h1 className="text-5xl tracking-[25px] font-semibold text-white">
           TODO
         </h1>
-        <h1>hello</h1>
         <Todo />
       </div>
     </main>

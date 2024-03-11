@@ -5,7 +5,7 @@ import { TodoList } from "./TodoList";
 import { TodoItemType } from "../types/Todo";
 
 const todoListFromLocalStorage = JSON.parse(
-  localStorage.getItem("todoList") || ""
+  localStorage.getItem("todoList") || "[]"
 );
 
 export const Todo = () => {
