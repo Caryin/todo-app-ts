@@ -1,36 +1,35 @@
 import { useState } from "react";
+import { TodoItemType } from "../types/Todo";
 
 interface CreateTodoProps {
-  setTodoList: React.Dispatch<
-    React.SetStateAction<{ id: number; todo: string; isChecked: boolean }[]>
-  >;
+  onCreateTodo: (todo: TodoItemType) => void;
 }
 
-export const CreateTodo: React.FC<CreateTodoProps> = ({ setTodoList }) => {
+export const CreateTodo: React.FC<CreateTodoProps> = ({ onCreateTodo }) => {
   const [newTodo, setNewTodo] = useState("");
 
-  function handleCreateTodo(e: React.ChangeEvent<HTMLInputElement>) {
+  function handleInputChange(e: React.ChangeEvent<HTMLInputElement>) {
     setNewTodo(e.target.value);
   }
 
-  function handleSubmitTodo(e: React.FormEvent<HTMLFormElement>) {
+  function handleCreateTodo(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    setTodoList((prevList) => [
-      ...prevList,
-      { id: Math.random(), todo: newTodo, isChecked: false },
-    ]);
+    if (newTodo === "") return;
+
+    onCreateTodo({ id: Math.random(), todo: newTodo, isChecked: false });
+
     setNewTodo("");
   }
 
   return (
     <form
       className="bg-[#25283D] flex rounded-md mt-14 mb-8 py-6 px-7 gap-5"
-      onSubmit={handleSubmitTodo}
+      onSubmit={handleCreateTodo}
     >
       <input
         placeholder="Create a new todo..."
         className="bg-inherit w-full focus:outline-none"
-        onChange={handleCreateTodo}
+        onChange={handleInputChange}
         value={newTodo}
       />
     </form>
